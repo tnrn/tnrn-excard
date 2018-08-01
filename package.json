@@ -1,25 +1,25 @@
 {
-  "name": "rnkit-excard",
+  "name": "tnrn-excard",
   "description": "易道博识-图像识别 for ReactNative",
   "main": "lib/index.js",
-  "author": "SimMan <liwei0990@gmail.com>",
+  "author": "LaoPan <jianquanpan@sina.com>",
   "version": "1.0.6",
   "scripts": {
     "test": "npm run test"
   },
-  "homepage": "https://github.com/rnkit/rnkit-excard",
-  "bugs": "https://github.com/rnkit/rnkit-excard/issues",
+  "homepage": "https://github.com/tnrn/tnrn-excard",
+  "bugs": "https://github.com/tnrn/tnrn-excard/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/rnkit/rnkit-excard"
+    "url": "https://github.com/tnrn/tnrn-excard"
   },
   "keywords": [
     "react",
     "react-native",
     "react-component",
     "excard",
-    "rnkit",
-    "rnkit-excard",
+    "tnrn",
+    "tnrn-excard",
     "react-native-ocr"
   ],
   "peerDependencies": {
