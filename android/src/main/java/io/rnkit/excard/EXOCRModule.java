@@ -15,14 +15,14 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import exocr.bankcard.BankManager;
+import exocr.bankcard.DataCallBack;
 import exocr.bankcard.EXBankCardInfo;
+import exocr.bankcard.PhotoCallBack;
 import exocr.drcard.DRManager;
-import exocr.engine.DataCallBack;
 import exocr.engine.EngineManager;
 import exocr.exocrengine.EXDRCardResult;
 import exocr.exocrengine.EXIDCardResult;
@@ -31,14 +31,17 @@ import exocr.idcard.IDCardManager;
 import exocr.vecard.VEManager;
 
 
-public class EXOCRModule extends ReactContextBaseJavaModule implements DataCallBack, exocr.bankcard.DataCallBack { // implements DataCallBack
+public class EXOCRModule extends ReactContextBaseJavaModule implements IDCardManager.IDCallBack,
+        DRManager.DRCallBack,
+        VEManager.VECallBack,
+        DataCallBack { // implements DataCallBack
 
     EXOCRContext exocrContext;
     private final ReactApplicationContext reactContext;
-    private static Promise promise;
-    private static ReadableMap options;
-    private static EXOCRType exocrType;
-    private static Boolean front;
+    private Promise promise;
+    private ReadableMap options;
+    private EXOCRType exocrType;
+    private Boolean front;
 
     public EXOCRModule(ReactApplicationContext reactContext, EXOCRContext exocrContext) {
         super(reactContext);
@@ -63,7 +66,7 @@ public class EXOCRModule extends ReactContextBaseJavaModule implements DataCallB
         return constants;
     }
 
-    public double getQuality () {
+    public double getQuality() {
         double quality;
         if (this.options != null && this.options.hasKey("quality") && !this.options.isNull("quality")) {
             quality = this.options.getDouble("quality");
@@ -129,6 +132,7 @@ public class EXOCRModule extends ReactContextBaseJavaModule implements DataCallB
         }
     }
 
+
     // --- 身份证
     @ReactMethod
     public void recoBankFromStream(@Nullable final Promise promise) {
@@ -142,7 +146,17 @@ public class EXOCRModule extends ReactContextBaseJavaModule implements DataCallB
         this.promise = promise;
         try {
             Bitmap bitmap = this.exocrContext.getBitmap(src);
-            BankManager.getInstance().recPhoto(bitmap);
+            BankManager.getInstance().recPhoto(bitmap, new PhotoCallBack() {
+                @Override
+                public void onPhotoRecSuccess(EXBankCardInfo exBankCardInfo) {
+                    EXOCRModule.this.onRecSuccess(0, exBankCardInfo);
+                }
+
+                @Override
+                public void onPhotoRecFailed(Bitmap bitmap) {
+                    EXOCRModule.this.onRecFailed(0, bitmap);
+                }
+            }, getReactApplicationContext());
         } catch (Exception e) {
 
         }
@@ -164,7 +178,17 @@ public class EXOCRModule extends ReactContextBaseJavaModule implements DataCallB
         this.exocrType = EXOCRType.EXOCRDRCard;
         try {
             Bitmap bitmap = this.exocrContext.getBitmap(src);
-            DRManager.getInstance().recPhoto(bitmap);
+            DRManager.getInstance().recPhoto(bitmap, new DRManager.PhotoCallBack() {
+                @Override
+                public void onPhotoRecSuccess(EXDRCardResult exdrCardResult) {
+                    EXOCRModule.this.onRecSuccess(0, exdrCardResult);
+                }
+
+                @Override
+                public void onPhotoRecFailed(Bitmap bitmap) {
+                    EXOCRModule.this.onRecFailed(0, bitmap);
+                }
+            });
         } catch (Exception e) {
 
         }
@@ -180,8 +204,7 @@ public class EXOCRModule extends ReactContextBaseJavaModule implements DataCallB
 
         Activity activity = getCurrentActivity();
         EngineManager.getInstance().initEngine(activity);
-        IDCardManager.getInstance().setFront(front);
-        IDCardManager.getInstance().recognize(this, activity);
+        IDCardManager.getInstance().recognizeWithSide(this, activity, front);
     }
 
     @ReactMethod
@@ -190,7 +213,17 @@ public class EXOCRModule extends ReactContextBaseJavaModule implements DataCallB
         this.exocrType = EXOCRType.EXOCRIDCard;
         try {
             Bitmap bitmap = this.exocrContext.getBitmap(src);
-            IDCardManager.getInstance().recPhoto(bitmap);
+            IDCardManager.getInstance().recPhoto(bitmap, new IDCardManager.PhotoCallBack() {
+                @Override
+                public void onPhotoRecSuccess(EXIDCardResult exidCardResult) {
+                    EXOCRModule.this.onRecSuccess(0, exidCardResult);
+                }
+
+                @Override
+                public void onPhotoRecFailed(Bitmap bitmap) {
+                    EXOCRModule.this.onRecFailed(0, bitmap);
+                }
+            });
         } catch (Exception e) {
 
         }
@@ -213,137 +246,185 @@ public class EXOCRModule extends ReactContextBaseJavaModule implements DataCallB
         this.exocrType = EXOCRType.EXOCRVECard;
         try {
             Bitmap bitmap = this.exocrContext.getBitmap(src);
-            VEManager.getInstance().recPhoto(bitmap);
+            VEManager.getInstance().recPhoto(bitmap, new VEManager.PhotoCallBack() {
+                @Override
+                public void onPhotoRecSuccess(EXVECardResult exveCardResult) {
+                    EXOCRModule.this.onRecSuccess(0, exveCardResult);
+                }
+
+                @Override
+                public void onPhotoRecFailed(Bitmap bitmap) {
+                    EXOCRModule.this.onRecFailed(0, bitmap);
+                }
+            });
         } catch (Exception e) {
 
         }
     }
 
+    /* -------- 以下是回调 -------- */
+
+    /**
+     * 驾驶证结果回调
+     *
+     * @param i
+     * @param result
+     */
     @Override
-    public void onBankCardDetected(boolean b) {
-        if (b) {
-            try {
-                EXBankCardInfo result = BankManager.getInstance().getCardInfo();
-                String fullImagePath = this.exocrContext.saveImage(result.fullImage, this.getQuality());
+    public void onRecSuccess(int i, EXDRCardResult result) {
+        try {
 
-                WritableMap map = Arguments.createMap();
-                map.putString("bankName", result.strBankName);
-                map.putString("cardName", result.strCardName);
-                map.putString("cardType", result.strCardType);
-                map.putString("cardNum", result.strNumbers);
-                map.putString("validDate", result.strValid);
-                map.putString("cardName", result.strCardName);
-                map.putString("cardName", result.strCardName);
-                map.putString("fullImgPath", fullImagePath);
-                map.putString("cardNumImgPath", "");
-                Log.d("onBankCardDetected", map.toString());
+            String fullImagePath = this.exocrContext.saveImage(result.stdCardIm, this.getQuality());
 
-                this.promise.resolve(map);
-            } catch (IOException e) {
-                this.promise.reject("-1", "");
+            WritableMap map = Arguments.createMap();
+            map.putString("name", result.szName);
+            map.putString("sex", result.szSex);
+            map.putString("nation", result.szNation);
+            map.putString("cardId", result.szCardID);
+            map.putString("address", result.szAddress);
+            map.putString("birth", result.szBirth);
+            map.putString("issueDate", result.szIssue);
+            map.putString("driveType", result.szClass);
+            map.putString("validDate", result.szValid);
+            map.putString("fullImgPath", fullImagePath);
+            Log.d("onCardDetected", map.toString());
+
+            EngineManager.getInstance().finishEngine();
+            this.promise.resolve(map);
+        } catch (Exception e) {
+            Log.d("onBankCardDetected", "-1");
+            this.promise.reject("-1", "");
+        }
+    }
+
+    /**
+     * 身份证结果回调
+     *
+     * @param i
+     * @param result
+     */
+    @Override
+    public void onRecSuccess(int i, EXIDCardResult result) {
+        try {
+            String fullImagePath = this.exocrContext.saveImage(result.stdCardIm, this.getQuality());
+
+            WritableMap map = Arguments.createMap();
+
+            map.putInt("type", this.front ? 1 : 2);
+            map.putString("name", result.name);
+            map.putString("gender", result.sex);
+            map.putString("nation", result.nation);
+            map.putString("birth", result.birth);
+            map.putString("address", result.address);
+            map.putString("code", result.cardnum);
+            map.putString("issue", result.office);
+            map.putString("valid", result.validdate);
+            map.putInt("frontShadow", -1);
+            map.putInt("backShadow", -1);
+
+            // 正面
+            if (this.front) {
+                map.putString("frontFullImgPath", fullImagePath);
+                String faceImgPath = this.exocrContext.saveImage(result.GetFaceBitmap(), this.getQuality());
+                map.putString("faceImgPath", faceImgPath);
+            } else {
+                map.putString("backFullImgPath", fullImagePath);
             }
-        } else {
+
+            Log.d("onCardDetected", map.toString());
+
+            EngineManager.getInstance().finishEngine();
+            this.promise.resolve(map);
+        } catch (Exception e) {
             Log.d("onBankCardDetected", "-1");
             this.promise.reject("-1", "");
         }
     }
 
     @Override
-    public void onCardDetected(boolean b) {
-        if (b) {
-            try {
-                // 驾驶证
-                if (this.exocrType == EXOCRType.EXOCRDRCard) {
+    public void onRecCanceled(int i) {
+        if (this.promise != null) {
+            this.promise.reject("-1", "用户取消了证件识别");
+        }
+    }
 
-                    EXDRCardResult result = DRManager.getInstance().getResult();
-                    String fullImagePath = this.exocrContext.saveImage(result.stdCardIm, this.getQuality());
+    @Override
+    public void onRecFailed(int i, Bitmap bitmap) {
+        if (this.promise != null) {
+            this.promise.reject("-1", "证件识别失败");
+        }
+    }
 
-                    WritableMap map = Arguments.createMap();
-                    map.putString("name", result.szName);
-                    map.putString("sex", result.szSex);
-                    map.putString("nation", result.szNation);
-                    map.putString("cardId", result.szCardID);
-                    map.putString("address", result.szAddress);
-                    map.putString("birth", result.szBirth);
-                    map.putString("issueDate", result.szIssue);
-                    map.putString("driveType", result.szClass);
-                    map.putString("validDate", result.szValid);
-                    map.putString("fullImgPath", fullImagePath);
-                    Log.d("onCardDetected", map.toString());
+    /**
+     * 行驶证结果回调
+     *
+     * @param i
+     * @param result
+     */
+    @Override
+    public void onRecSuccess(int i, EXVECardResult result) {
+        try {
+            String fullImagePath = this.exocrContext.saveImage(result.stdCardIm, this.getQuality());
 
-                    EngineManager.getInstance().finishEngine();
-                    this.promise.resolve(map);
+            WritableMap map = Arguments.createMap();
+            map.putString("plateNo", result.szPlateNo);
+            map.putString("vehicleType", result.szVehicleType);
+            map.putString("owner", result.szOwner);
+            map.putString("address", result.szAddress);
+            map.putString("model", result.szModel);
+            map.putString("useCharacter", result.szUseCharacter);
+            map.putString("engineNo", result.szEngineNo);
+            map.putString("VIN", result.szVIN);
+            map.putString("registerDate", result.szRegisterDate);
+            map.putString("issueDate", result.szIssueDate);
+            map.putString("fullImgPath", fullImagePath);
+            Log.d("onCardDetected", map.toString());
 
-                // 身份证
-                } else if (this.exocrType == EXOCRType.EXOCRIDCard) {
-
-                    EXIDCardResult result = IDCardManager.getInstance().getResult();
-                    String fullImagePath = this.exocrContext.saveImage(result.stdCardIm, this.getQuality());
-
-                    WritableMap map = Arguments.createMap();
-
-                    map.putInt("type", this.front ? 1 : 2);
-                    map.putString("name", result.name);
-                    map.putString("gender", result.sex);
-                    map.putString("nation", result.nation);
-                    map.putString("birth", result.birth);
-                    map.putString("address", result.address);
-                    map.putString("code", result.cardnum);
-                    map.putString("issue", result.office);
-                    map.putString("valid", result.validdate);
-                    map.putInt("frontShadow", -1);
-                    map.putInt("backShadow", -1);
-
-                    // 正面
-                    if (this.front) {
-                        map.putString("frontFullImgPath", fullImagePath);
-                        String faceImgPath = this.exocrContext.saveImage(result.GetFaceBitmap(), this.getQuality());
-                        map.putString("faceImgPath", faceImgPath);
-                    } else {
-                        map.putString("backFullImgPath", fullImagePath);
-                    }
-
-                    Log.d("onCardDetected", map.toString());
-
-                    EngineManager.getInstance().finishEngine();
-                    this.promise.resolve(map);
-
-                } else if (this.exocrType == EXOCRType.EXOCRVECard) {
-                    EXVECardResult result = VEManager.getInstance().getResult();
-                    String fullImagePath = this.exocrContext.saveImage(result.stdCardIm, this.getQuality());
-
-                    WritableMap map = Arguments.createMap();
-                    map.putString("plateNo", result.szPlateNo);
-                    map.putString("vehicleType", result.szVehicleType);
-                    map.putString("owner", result.szOwner);
-                    map.putString("address", result.szAddress);
-                    map.putString("model", result.szModel);
-                    map.putString("useCharacter", result.szUseCharacter);
-                    map.putString("engineNo", result.szEngineNo);
-                    map.putString("VIN", result.szVIN);
-                    map.putString("registerDate", result.szRegisterDate);
-                    map.putString("issueDate", result.szIssueDate);
-                    map.putString("fullImgPath", fullImagePath);
-                    Log.d("onCardDetected", map.toString());
-
-                    EngineManager.getInstance().finishEngine();
-                    this.promise.resolve(map);
-                } else {
-                    this.promise.reject("-1", "");
-                }
-            } catch (IOException e) {
-                this.promise.reject("-1", "");
-            }
-        } else {
-            Log.d("onBankCardDetected", "-1");
+            EngineManager.getInstance().finishEngine();
+            this.promise.resolve(map);
+        } catch (Exception e) {
             this.promise.reject("-1", "");
         }
     }
 
     @Override
     public void onCameraDenied() {
-
+        if (this.promise != null) {
+            this.promise.reject("-2", "没有使用相机或相册的权限");
+        }
     }
+
+
+    /* -------- 以下是银行卡识别 ---------- */
+
+    /**
+     *
+     * @param i
+     * @param result
+     */
+    @Override
+    public void onRecSuccess(int i, EXBankCardInfo result) {
+        try {
+            String fullImagePath = this.exocrContext.saveImage(result.fullImage, this.getQuality());
+
+            WritableMap map = Arguments.createMap();
+            map.putString("bankName", result.strBankName);
+            map.putString("cardName", result.strCardName);
+            map.putString("cardType", result.strCardType);
+            map.putString("cardNum", result.strNumbers);
+            map.putString("validDate", result.strValid);
+            map.putString("cardName", result.strCardName);
+            map.putString("cardName", result.strCardName);
+            map.putString("fullImgPath", fullImagePath);
+            map.putString("cardNumImgPath", "");
+            Log.d("onBankCardDetected", map.toString());
+
+            this.promise.resolve(map);
+        } catch (Exception e) {
+            this.promise.reject("-1", "");
+        }
+    }
+
 
     public static enum EXOCRType {
         EXOCRDRCard,  // 驾驶证
