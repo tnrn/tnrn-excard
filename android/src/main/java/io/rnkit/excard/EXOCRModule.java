@@ -204,6 +204,7 @@ public class EXOCRModule extends ReactContextBaseJavaModule implements IDCardMan
 
         Activity activity = getCurrentActivity();
         EngineManager.getInstance().initEngine(activity);
+        IDCardManager.getInstance().setPackageName(getReactApplicationContext().getPackageName());
         IDCardManager.getInstance().recognizeWithSide(this, activity, front);
     }
 
