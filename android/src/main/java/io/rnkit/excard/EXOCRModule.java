@@ -1,6 +1,5 @@
 
 package io.rnkit.excard;
-
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
