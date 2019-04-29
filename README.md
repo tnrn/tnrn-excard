@@ -37,7 +37,7 @@ First, `cd` to your RN project directory, and install RNMK through [rnpm](https:
 
   最后还需要手动导入 `bundle` 资源文件：
 
-  在主工程中找到 `Libraries` 下面的 `RNKitExcard`，然后找到 `Framework` 文件夹，鼠标右键 `show in finder`，然后将里面的两个 `.bundle` 文件拖入主工程中
+  在主工程中找到 `Libraries` 下面的 `RNKitExcard`，然后找到 `Framework` 文件夹，鼠标右键 `Show in Finder`，然后将里面的两个 `.bundle` 文件拖入主工程中，切记，一定要 *勾选* `add to targets`，*不需要勾选* `copy items if meed`
 
 ### Android
 
