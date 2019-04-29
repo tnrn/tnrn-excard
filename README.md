@@ -1,60 +1,62 @@
 [![npm][npm-badge]][npm]
 [![react-native][rn-badge]][rn]
 [![MIT][license-badge]][license]
-[![bitHound Score][bithound-badge]][bithound]
-[![Downloads](https://img.shields.io/npm/dm/rnkit-excard.svg)](https://www.npmjs.com/package/rnkit-excard)
+[![Downloads](https://img.shields.io/npm/dm/tnrn-excard.svg)](https://www.npmjs.com/package/tnrn-excard)
 
 易道博识-图像识别 for [React Native][rn].
 
-[**Support me with a Follow**](https://github.com/simman/followers)
 
-[npm-badge]: https://img.shields.io/npm/v/rnkit-excard.svg
-[npm]: https://www.npmjs.com/package/rnkit-excard
+[npm-badge]: https://img.shields.io/npm/v/tnrn-excard.svg
+[npm]: https://www.npmjs.com/package/tnrn-excard
 [rn-badge]: https://img.shields.io/badge/react--native-v0.40-05A5D1.svg
 [rn]: https://facebook.github.io/react-native
 [license-badge]: https://img.shields.io/dub/l/vibe-d.svg
-[license]: https://raw.githubusercontent.com/rnkit/rnkit-excard/master/LICENSE
-[bithound-badge]: https://www.bithound.io/github/rnkit/rnkit-excard/badges/score.svg
-[bithound]: https://www.bithound.io/github/rnkit/rnkit-excard
+[license]: https://raw.githubusercontent.com/tnrn/tnrn-excard/master/LICENSE
+
 
 ## Getting Started
 
-First, `cd` to your RN project directory, and install RNMK through [rnpm](https://github.com/rnpm/rnpm) . If you don't have rnpm, you can install RNMK from npm with the command `npm i -S rnkit-excard` and link it manually (see below).
+First, `cd` to your RN project directory, and install RNMK through [rnpm](https://github.com/rnpm/rnpm) . If you don't have rnpm, you can install RNMK from npm with the command `npm i -S tnrn-excard` and link it manually (see below).
 
 ### iOS
 
 * #### React Native < 0.29 (Using rnpm)
 
-  `rnpm install rnkit-excard`
+  `rnpm install tnrn-excard`
 
 * #### React Native >= 0.29
-  `$npm install -S rnkit-excard`
+  `$npm install -S tnrn-excard`
 
-  `$react-native link rnkit-excard`
+  `$react-native link tnrn-excard`
 
-#### Manually
-1. Add `node_modules/rnkit-excard/ios/RNKitExcard.xcodeproj` to your xcode project, usually under the `Libraries` group
-1. Add `libRNKitExcard.a` (from `Products` under `RNKitExcard.xcodeproj`) to build target's `Linked Frameworks and Libraries` list
-1. Add ocr framework to `$(PROJECT_DIR)/Frameworks.`
+* ### Notice
+
+  在 `Build Settings->Search Paths->Framework Search Paths` 中加入路径 `$(SRCROOT)/../node_modules/tnrn-excard/ios/Framework`
+
+  在 `Build Settings->Link->Other Linker Flags` 中加入 `-framework "ExCardSDK"` 和 `-framework "ExBankCardSDK"`
+
+  最后还需要手动导入 `bundle` 资源文件：
+
+  在主工程中找到 `Libraries` 下面的 `RNKitExcard`，然后找到 `Framework` 文件夹，鼠标右键 `show in finder`，然后将里面的两个 `.bundle` 文件拖入主工程中
 
 ### Android
 
 * #### React Native < 0.29 (Using rnpm)
 
-  `rnpm install rnkit-excard`
+  `rnpm install tnrn-excard`
 
 * #### React Native >= 0.29
-  `$npm install -S rnkit-excard`
+  `$npm install -S tnrn-excard`
 
-  `$react-native link rnkit-excard`
+  `$react-native link tnrn-excard`
 
 #### Manually
 1. JDK 7+ is required
 1. Add the following snippet to your `android/settings.gradle`:
 
   ```gradle
-include ':rnkit-excard'
-project(':rnkit-excard').projectDir = new File(rootProject.projectDir, '../node_modules/rnkit-excard/android/app')
+include ':tnrn-excard'
+project(':tnrn-excard').projectDir = new File(rootProject.projectDir, '../node_modules/tnrn-excard/android/app')
   ```
   
 1. Declare the dependency in your `android/app/build.gradle`
@@ -62,11 +64,11 @@ project(':rnkit-excard').projectDir = new File(rootProject.projectDir, '../node_
   ```gradle
   dependencies {
       ...
-      compile project(':rnkit-excard')
+      compile project(':tnrn-excard')
   }
   ```
   
-1. Import `import io.rnkit.excard.EXOCRPackage;` and register it in your `MainActivity` (or equivalent, RN >= 0.32 MainApplication.java):
+1. Import `import io.tnrn.excard.EXOCRPackage;` and register it in your `MainActivity` (or equivalent, RN >= 0.32 MainApplication.java):
 
   ```java
   @Override
@@ -79,7 +81,7 @@ project(':rnkit-excard').projectDir = new File(rootProject.projectDir, '../node_
   ```
 1. Add Module `ExBankCardSDK` And `ExCardSDK` In Your Main Project.
 
-Finally, you're good to go, feel free to require `rnkit-excard` in your JS files.
+Finally, you're good to go, feel free to require `tnrn-excard` in your JS files.
 
 Have fun! :metal:
 
@@ -88,13 +90,13 @@ Have fun! :metal:
 Import library
 
 ```
-import RNKitExcard from 'rnkit-excard';
+import RNExcard from 'tnrn-excard';
 ```
 
 ### Init
 
 ```jsx
-RNKitExcard.config({
+RNExcard.config({
   DisplayLogo: false
   ....
 })
@@ -146,7 +148,7 @@ RNKitExcard.config({
 
 ```jsx
 try {
-	const result = await RNKitExcard.recoBankFromStream();
+	const result = await RNExcard.recoBankFromStream();
 } catch (error) {
 	if (error.code === -1) {
 		console.log('on cancel')
@@ -161,7 +163,7 @@ try {
 ```jsx
 try {
 	const imagePath = '...';
-	const result = await RNKitExcard.recoBankFromStillImage(imagePath);
+	const result = await RNExcard.recoBankFromStillImage(imagePath);
 } catch (error) {
 	if (error.code === -1) {
 		console.log('on cancel')
@@ -189,7 +191,7 @@ try {
 
 ```jsx
 try {
-	const result = await RNKitExcard.recoDRCardFromStream();
+	const result = await RNExcard.recoDRCardFromStream();
 } catch (error) {
 	if (error.code === -1) {
 		console.log('on cancel')
@@ -204,7 +206,7 @@ try {
 ```jsx
 try {
 	const imagePath = '...';
-	const result = await RNKitExcard.recoDRCardFromStillImage(imagePath);
+	const result = await RNExcard.recoDRCardFromStillImage(imagePath);
 } catch (error) {
 	if (error.code === -1) {
 		console.log('on cancel')
@@ -235,7 +237,7 @@ try {
 
 ```jsx
 try {
-	const result = await RNKitExcard.recoVECardFromStream();
+	const result = await RNExcard.recoVECardFromStream();
 } catch (error) {
 	if (error.code === -1) {
 		console.log('on cancel')
@@ -250,7 +252,7 @@ try {
 ```jsx
 try {
 	const imagePath = '...';
-	const result = await RNKitExcard.recoVECardFromStillImage(imagePath);
+	const result = await RNExcard.recoVECardFromStillImage(imagePath);
 } catch (error) {
 	if (error.code === -1) {
 		console.log('on cancel')
@@ -283,7 +285,7 @@ try {
 ```jsx
 try {
 	const bFront = true  // 身份证方向，true-正面，false-背面
-	const result = await RNKitExcard.recoIDCardFromStreamWithSide(bFront);
+	const result = await RNExcard.recoIDCardFromStreamWithSide(bFront);
 } catch (error) {
 	if (error.code === -1) {
 		console.log('on cancel')
@@ -298,7 +300,7 @@ try {
 ```jsx
 try {
 	const imagePath = '...';
-	const result = await RNKitExcard.recoIDCardFromStillImage(imagePath);
+	const result = await RNExcard.recoIDCardFromStillImage(imagePath);
 } catch (error) {
 	if (error.code === -1) {
 		console.log('on cancel')
@@ -330,8 +332,8 @@ try {
 ### 五、常量
 
 ```jsx
-const sdkVersion = RNKitExcard.sdkVersion;
-const kernelVersion = RNKitExcard.kernelVersion;
+const sdkVersion = RNExcard.sdkVersion;
+const kernelVersion = RNExcard.kernelVersion;
 ```
 
 | Key | Type | Default | Description |
@@ -343,7 +345,7 @@ const kernelVersion = RNKitExcard.kernelVersion;
 
 ```jsx
 try {
-	const result = await RNKitExcard.clean();
+	const result = await RNExcard.clean();
 } catch (error) {
 	console.log(error)
 }
@@ -355,6 +357,6 @@ try {
 
 ## Questions
 
-Feel free to [contact me](mailto:liwei0990@gmail.com) or [create an issue](https://github.com/rnkit/rnkit-excard/issues/new)
+Feel free to [contact me](mailto:liwei0990@gmail.com) or [create an issue](https://github.com/tnrn/tnrn-excard/issues/new)
 
 > made with ♥
