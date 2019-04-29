@@ -3,12 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 48;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		3FD15E931EC04B1B001ABA06 /* RNKitEXOCR.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD15E921EC04B1B001ABA06 /* RNKitEXOCR.m */; };
 		3FD15E961EC04C06001ABA06 /* RNKitExcardUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD15E951EC04C06001ABA06 /* RNKitExcardUtils.m */; };
+		C8899E94227699B40096B3D2 /* ExBankCardSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8899E90227699B30096B3D2 /* ExBankCardSDK.framework */; };
+		C8899E95227699B40096B3D2 /* ExCardSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8899E92227699B30096B3D2 /* ExCardSDK.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,6 +31,10 @@
 		3FD15E921EC04B1B001ABA06 /* RNKitEXOCR.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNKitEXOCR.m; sourceTree = "<group>"; };
 		3FD15E941EC04C06001ABA06 /* RNKitExcardUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNKitExcardUtils.h; sourceTree = "<group>"; };
 		3FD15E951EC04C06001ABA06 /* RNKitExcardUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNKitExcardUtils.m; sourceTree = "<group>"; };
+		C8899E90227699B30096B3D2 /* ExBankCardSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ExBankCardSDK.framework; sourceTree = "<group>"; };
+		C8899E91227699B30096B3D2 /* ExBankCardRes.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ExBankCardRes.bundle; sourceTree = "<group>"; };
+		C8899E92227699B30096B3D2 /* ExCardSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ExCardSDK.framework; sourceTree = "<group>"; };
+		C8899E93227699B30096B3D2 /* ExCardRes.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ExCardRes.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,6 +42,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C8899E95227699B40096B3D2 /* ExCardSDK.framework in Frameworks */,
+				C8899E94227699B40096B3D2 /* ExBankCardSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -57,8 +65,20 @@
 				3FD15E951EC04C06001ABA06 /* RNKitExcardUtils.m */,
 				3FD15E911EC04B1B001ABA06 /* RNKitEXOCR.h */,
 				3FD15E921EC04B1B001ABA06 /* RNKitEXOCR.m */,
+				C8899E8F227699B30096B3D2 /* Framework */,
 				134814211AA4EA7D00B7C361 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		C8899E8F227699B30096B3D2 /* Framework */ = {
+			isa = PBXGroup;
+			children = (
+				C8899E90227699B30096B3D2 /* ExBankCardSDK.framework */,
+				C8899E91227699B30096B3D2 /* ExBankCardRes.bundle */,
+				C8899E92227699B30096B3D2 /* ExCardSDK.framework */,
+				C8899E93227699B30096B3D2 /* ExCardRes.bundle */,
+			);
+			path = Framework;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -88,7 +108,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0610;
-				ORGANIZATIONNAME = Facebook;
+				ORGANIZATIONNAME = tnrn;
 				TargetAttributes = {
 					58B511DA1A9E6C8500147676 = {
 						CreatedOnToolsVersion = 6.1.1;
@@ -96,10 +116,11 @@
 				};
 			};
 			buildConfigurationList = 58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "RNKitExcard" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 58B511D21A9E6C8500147676;
@@ -202,7 +223,10 @@
 		58B511F01A9E6C8500147676 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../../ios/Frameworks/**";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SRCROOT)/../../../ios/Frameworks/**",
+					"$(PROJECT_DIR)/vendor",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -219,7 +243,10 @@
 		58B511F11A9E6C8500147676 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../../ios/Frameworks/**";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SRCROOT)/../../../ios/Frameworks/**",
+					"$(PROJECT_DIR)/vendor",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
