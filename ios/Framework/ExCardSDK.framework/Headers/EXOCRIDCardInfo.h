@@ -47,6 +47,7 @@
 
 @property (nonatomic, strong) UIImage *frontFullImg;//身份证正面全图
 @property (nonatomic, strong) UIImage *backFullImg; //身份证背面全图
+@property (nonatomic, strong) UIImage *originalImg; //身份证识别原图
 
 @property (assign, nonatomic) int frontShadow; //1:正面图像有遮挡 0:正面图像无遮挡
 @property (assign, nonatomic) int backShadow; //1:背面图像有遮挡 0:背面图像无遮挡

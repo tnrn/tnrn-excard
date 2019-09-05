@@ -61,6 +61,12 @@ typedef void (^EXOCRFailedBlock)(int statusCode, UIImage *recoImg);
  */
 -(void)controlNavigationrControllerHiddenBySDK:(BOOL)bControl;
 
+/**
+ @brief 设置识别视频流质量
+ @param sessionPreset 视频流质量
+ */
+-(void)setVECardSessionPreset:(NSString *)sessionPreset;
+
 #pragma mark - 默认扫描视图
 /**
  * @brief 调用行驶证扫描识别(若自定义扫描视图，请使用recoVECardFromStreamByCustomScanView方法调用识别)

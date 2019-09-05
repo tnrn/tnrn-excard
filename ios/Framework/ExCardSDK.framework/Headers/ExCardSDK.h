@@ -24,4 +24,3 @@ FOUNDATION_EXPORT const unsigned char ExCardSDKVersionString[];
 #import <ExCardSDK/EXOCRIDCardInfo.h>
 #import <ExCardSDK/EXOCRVECardInfo.h>
 #import <ExCardSDK/EXOCRDRCardInfo.h>
-

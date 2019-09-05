@@ -32,6 +32,19 @@ typedef void (^EXOCRFailedBlock)(int statusCode, UIImage *recoImg);
 -(void)setImageMode:(int)imageMode;
 
 /**
+ * @brief 取图设置，设置取图模式（目前支持三种取图模式）
+ * @param imageMode - 取图模式（可配置取图模式在EXOCRIDCardInfo.h中定义）
+ * @param borderWidth - 留白宽度（仅在imageMode为ID_IMAGEMODE_HIGH时支持, 范围1-128）
+ */
+-(void)setImageMode:(int)imageMode AndBorderWidth:(int)borderWidth;
+
+/**
+ * @brief 相册识别时取图设置，设置取图模式（目前支持三种取图模式）
+ * @param imageMode - 取图模式（可配置取图模式在EXOCRIDCardInfo.h中定义）
+ */
+- (void)setPhotoImageMode:(int)imageMode;
+
+/**
  * @brief 静态图片识别方法
  * @param image - 待识别静态图像
  * @param completedBlock - 识别成功回调，获取识别结果EXOCRIDCardInfo对象
@@ -66,6 +79,28 @@ typedef void (^EXOCRFailedBlock)(int statusCode, UIImage *recoImg);
  @param bControl 是否交给SDK控制（YES:扫描页隐藏NavigationrController，退出扫描页时显示;NO:由开发者自行控制NavigationrController是否隐藏;默认为YES）
  */
 -(void)controlNavigationrControllerHiddenBySDK:(BOOL)bControl;
+
+/**
+ @brief 设置识别视频流质量
+ @param sessionPreset 视频流质量
+ */
+-(void)setIDCardSessionPreset:(NSString *)sessionPreset;
+
+/**
+ 设置是否隐藏扫描页状态栏
+ 
+ @param hidden YES - 隐藏 ； NO - 显示（默认为YES）
+ */
+-(void)setStatusBarHidden:(BOOL)hidden;
+
+
+/**
+ 设置状态栏内容颜色
+ 
+ @param statusBarStyle 状态栏样式 默认：UIStatusBarStyleDefault
+ UIStatusBarStyleDefault 或 UIStatusBarStyleLightContent
+ */
+-(void)setStatusBarStyle:(UIStatusBarStyle)statusBarStyle;
 
 #pragma mark - 默认扫描视图
 /**
@@ -161,6 +196,7 @@ typedef void (^EXOCRFailedBlock)(int statusCode, UIImage *recoImg);
  * @param fontSize - 字体大小
  */
 -(void)setScanErrorTipsFontName:(NSString *)fontName andFontSize:(float)fontSize;
+
 
 #pragma mark - 自定义扫描视图
 /**

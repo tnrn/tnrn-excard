@@ -46,4 +46,11 @@
  *  @return 识别核心版本号
  */
 +(NSString *)getKernelVersion;
+
+/**
+ *  @brief  根据传入的地址字符串装换成一个地址的数组
+ *  @param addressStr 地址字符串
+ *  @return 地址数组
+ */
++(NSArray *)getAddressArrayWithString:(NSString *)addressStr;
 @end

@@ -73,6 +73,22 @@ typedef void (^EXOCRFailedBlock)(int statusCode, UIImage *recoImg);
  */
 -(void)setSpaceWithBANKCardNum:(BOOL)bSpace;
 
+
+/**
+ 设置是否隐藏扫描页状态栏
+
+ @param hidden YES - 隐藏 ； NO - 显示（默认为YES）
+ */
+-(void)setStatusBarHidden:(BOOL)hidden;
+
+/**
+ 设置状态栏内容颜色
+ 
+ @param statusBarStyle 状态栏样式 默认：UIStatusBarStyleDefault
+ （UIStatusBarStyleDefault 或 UIStatusBarStyleLightContent）
+ */
+-(void)setStatusBarStyle:(UIStatusBarStyle)statusBarStyle;
+
 /**
  *	@brief 获取sdk版本号
  *  @return sdk版本号
@@ -84,6 +100,20 @@ typedef void (^EXOCRFailedBlock)(int statusCode, UIImage *recoImg);
  *  @return 识别核心版本号
  */
 +(NSString *)getKernelVersion;
+
+/**
+ 卡号有效性判断需接口外部判断（位数，去空格等）
+
+ @param cardNum 银行卡号字符串
+ @return 银行卡信息
+ */
+//-(EXOCRBankCardInfo *)queryBankInfo:(NSString *)cardNum;
+
+/**
+ @brief 识别视频流分辨率
+ @param sessionPreset 视频流分辨率
+ */
+-(void)setBankCardSessionPreset:(NSString *)sessionPreset;
 
 #pragma - mark 默认扫描视图
 /**

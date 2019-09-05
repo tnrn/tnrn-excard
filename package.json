@@ -3,7 +3,7 @@
   "description": "易道博识-图像识别 for ReactNative",
   "main": "lib/index.js",
   "author": "LaoPan <jianquanpan@sina.com>",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "scripts": {
     "test": "npm run test"
   },
